@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SurakshaScore (PSS) — Interactive App & Data Flow Architecture (16:9)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-base: #F5F1E8;
+      --bg-card: #FFFFFF;
+      --bg-subtle: #ECE7DD;
+      --border-color: #E0DAD0;
+      --border-dark: #C9C2B5;
+      --text-primary: #111210;
+      --text-secondary: #585A54;
+      --text-muted: #84867E;
+
+      --color-green: #15803d;
+      --color-green-bg: #f0fdf4;
+      --color-green-border: #bbf7d0;
+
+      --color-red: #b91c1c;
+      --color-red-bg: #fef2f2;
+      --color-red-border: #fecaca;
+
+      --color-amber: #b45309;
+      --color-amber-bg: #fffbeb;
+      --color-amber-border: #fde68a;
+
+      --color-blue: #1d4ed8;
+      --color-blue-bg: #eff6ff;
+      --color-blue-border: #bfdbfe;
+
+      --color-purple: #6d28d9;
+      --color-purple-bg: #faf5ff;
+      --color-purple-border: #e9d5ff;
+
+      --color-teal: #0f766e;
+      --color-teal-bg: #f0fdfa;
+      --color-teal-border: #99f6e4;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background-color: var(--bg-base);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: var(--text-primary);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* 16:9 Presentation Canvas */
+    .flow-canvas {
+      width: 100%;
+      max-width: 1920px;
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: 24px 36px 28px 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    /* Top Presentation Bar */
+    .flow-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .brand-meta {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-badge {
+      width: 38px;
+      height: 38px;
+      background: #111210;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      font-weight: 800;
+      font-size: 16px;
+      letter-spacing: -0.04em;
+    }
+
+    .brand-title h1 {
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text-primary);
+      line-height: 1.1;
+    }
+
+    .brand-title p {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .header-tags {
+      display: flex;
+      gap: 8px;
+    }
+
+    .pill-tag {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 4px 10px;
+      border-radius: 9999px;
+    }
+
+    .pill-green { background: var(--color-green-bg); color: var(--color-green); border: 1px solid var(--color-green-border); }
+    .pill-blue { background: var(--color-blue-bg); color: var(--color-blue); border: 1px solid var(--color-blue-border); }
+    .pill-purple { background: var(--color-purple-bg); color: var(--color-purple); border: 1px solid var(--color-purple-border); }
+
+    /* Main Showcase Flow Grid */
+    .flow-container {
+      position: relative;
+      margin: 8px 0 16px 0;
+    }
+
+    .flow-phones-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 16px;
+      width: 100%;
+      position: relative;
+      z-index: 2;
+    }
+
+    @media (max-width: 1300px) {
+      .flow-phones-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+      }
+    }
+
+    .flow-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+    }
+
+    /* Hardware Phone Shell */
+    .phone-mockup {
+      width: 100%;
+      background: #FFFFFF;
+      border: 2.5px solid #D6CEBE;
+      border-radius: 32px;
+      padding: 8px 8px 12px 8px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+      display: flex;
+      flex-direction: column;
+      height: 560px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.15s ease;
+    }
+
+    .phone-mockup:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.07);
+    }
+
+    /* Top Notch */
+    .mockup-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1px 6px 4px 6px;
+      font-size: 7.5px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .notch-island {
+      width: 48px;
+      height: 10px;
+      background: #111210;
+      border-radius: 9999px;
+      margin: 0 auto;
+    }
+
+    /* Internal Screen Area */
+    .mockup-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      font-size: 9px;
+      padding-top: 2px;
+    }
+
+    .screen-header-line {
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 4px;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .screen-title-badge {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-primary);
+    }
+
+    .screen-tag-pill {
+      font-size: 7px;
+      font-weight: 700;
+      padding: 1px 4px;
+      border-radius: 3px;
+      background: var(--bg-subtle);
+      color: var(--text-secondary);
+    }
+
+    .ui-card {
+      background: #FAF8F5;
+      border: 1px solid var(--border-color);
+      border-radius: 9px;
+      padding: 6px 7px;
+      margin-bottom: 5px;
+    }
+
+    .ui-card-title {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .ui-card-desc {
+      font-size: 8px;
+      color: var(--text-secondary);
+      margin-top: 1.5px;
+      line-height: 1.25;
+    }
+
+    /* Circular Hero Score */
+    .circle-score-radar {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      border: 3px solid var(--color-green);
+      margin: 2px auto 4px auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #FFFFFF;
+    }
+
+    .circle-score-num {
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--text-primary);
+    }
+
+    .circle-score-label {
+      font-size: 6px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    .ui-telemetry-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+      text-align: center;
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      padding: 3px 0;
+      margin: 5px 0;
+      font-size: 7.5px;
+    }
+
+    .ui-telemetry-row span {
+      display: block;
+      color: var(--text-muted);
+      font-size: 6px;
+      text-transform: uppercase;
+    }
+
+    .ui-telemetry-row strong {
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .ui-vector-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 8px;
+      margin-bottom: 2.5px;
+    }
+
+    .ui-vector-track {
+      height: 3px;
+      background: #E5DFD4;
+      border-radius: 2px;
+      flex: 1;
+      margin: 0 5px;
+      overflow: hidden;
+    }
+
+    .ui-vector-fill {
+      height: 100%;
+      border-radius: 2px;
+    }
+
+    .ui-btn-action {
+      display: block;
+      width: 100%;
+      padding: 5.5px 7px;
+      border-radius: 6px;
+      font-size: 8.5px;
+      font-weight: 700;
+      text-align: center;
+      margin-top: auto;
+      border: none;
+      background: #111210;
+      color: #FFFFFF;
+      letter-spacing: 0.02em;
+    }
+
+    .mockup-dock {
+      margin-top: 5px;
+      border-top: 1px solid var(--border-color);
+      padding-top: 5px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1px;
+      text-align: center;
+      font-size: 6.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .dock-active-tab {
+      color: var(--text-primary);
+      font-weight: 800;
+    }
+
+    /* Column Step Label */
+    .flow-step-label {
+      font-size: 10.5px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .flow-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--text-primary);
+    }
+
+    /* Primary Inter-Phone Connector Arrow */
+    .flow-connector-arrow {
+      position: absolute;
+      right: -13px;
+      top: 45%;
+      transform: translateY(-50%);
+      z-index: 10;
+      background: #FFFFFF;
+      border: 1px solid var(--border-color);
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: var(--text-primary);
+      font-weight: 800;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    /* Secondary Loop Annotation Badges */
+    .secondary-connector-chip {
+      font-size: 8px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: #FFFFFF;
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      white-space: nowrap;
+    }
+
+    /* Bottom Architecture & Data Flow Banner */
+    .system-pipeline-footer {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 12px 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+      margin-top: 6px;
+    }
+
+    .pipeline-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .pipeline-title-row span {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+    }
+
+    .pipeline-steps-strip {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 6px;
+      align-items: center;
+    }
+
+    .pipeline-box {
+      background: var(--bg-base);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 6px 8px;
+      text-align: center;
+      position: relative;
+    }
+
+    .pipeline-box strong {
+      display: block;
+      font-size: 9.5px;
+      color: var(--text-primary);
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .pipeline-box span {
+      font-size: 8px;
+      color: var(--text-secondary);
+      display: block;
+      margin-top: 1px;
+    }
+
+    .pipeline-box .p-tag {
+      font-size: 6.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 1px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="flow-canvas">
+
+  <!-- Presentation Header -->
+  <header class="flow-header">
+    <div class="brand-meta">
+      <div class="brand-badge">SS</div>
+      <div class="brand-title">
+        <h1>SurakshaScore — Application Flow & Data Architecture</h1>
+        <p>End-to-End User Journey & On-Device Security Evaluation Pipeline (16:9 Presentation Master)</p>
+      </div>
+    </div>
+    <div class="header-tags">
+      <span class="pill-tag pill-green">5 Primary Destinations</span>
+      <span class="pill-tag pill-blue">Dynamic Re-scan Loop</span>
+      <span class="pill-tag pill-purple">Enclave Data Isolation</span>
+    </div>
+  </header>
+
+  <!-- MAIN 6-PHONE USER FLOW WITH CONNECTORS -->
+  <div class="flow-container">
+    <div class="flow-phones-grid">
+
+      <!-- 1. POSTURE -->
+      <div class="flow-column">
+        <div class="phone-mockup">
+          <div class="mockup-top">
+            <span>9:41</span>
+            <div class="notch-island"></div>
+            <span>5G</span>
+          </div>
+
+          <div class="mockup-body">
+            <div class="screen-header-line">
+              <span class="screen-title-badge">1. Posture</span>
+              <span class="screen-tag-pill">Enclave OS</span>
+            </div>
+
+            <div class="circle-score-radar">
+              <span class="circle-score-num">85</span>
+              <span class="circle-score-label">Hygiene Index</span>
+            </div>
+
+            <div style="text-align:center; margin-bottom:3px;">
+              <strong style="font-size:8.5px; color:var(--color-red);">● 3 urgent issues active</strong>
+            </div>
+
+            <div class="ui-telemetry-row">
+              <div><span>Coverage</span><strong>88%</strong></div>
+              <div><span>Verified</span><strong>8 checks</strong></div>
+              <div><span>Risks</span><strong style="color:var(--color-red)">3 open</strong></div>
+              <div><span>Audit</span><strong>Local OS</strong></div>
+            </div>
+
+            <div class="ui-card" style="display:flex; justify-content:space-between; align-items:center; padding:4px 6px;">
+              <span style="font-size:8px; font-weight:700;">Habits: 7/10 answered</span>
+              <span style="font-size:6.5px; color:var(--color-blue); font-weight:700;">SELF-REPORTED</span>
+            </div>
+
+            <div style="margin:2px 0;">
+              <div class="ui-vector-row">
+                <span>Device & OS</span>
+                <div class="ui-vector-track"><div class="ui-vector-fill" style="width:75%; background:var(--color-blue);"></div></div>
+                <strong style="font-family:'JetBrains Mono'">75</strong>
+              </div>
+              <div class="ui-vector-row">
+                <span>Apps & Perms</span>
+                <div class="ui-vector-track"><div class="ui-vector-fill" style="width:80%; background:var(--color-purple);"></div></div>
+                <strong style="font-family:'JetBrains Mono'">80</strong>
+              </div>
+              <div class="ui-vector-row">
+                <span>Account Safety</span>
+                <div class="ui-vector-track"><div class="ui-vector-fill" style="width:80%; background:var(--color-amber);"></div></div>
+                <strong style="font-family:'JetBrains Mono'">80</strong>
+              </div>
+            </div>
+
+            <button class="ui-btn-action">Run Security Check →</button>
+          </div>
+
+          <div class="mockup-dock">
+            <span class="dock-active-tab">Posture</span>
+            <span>Scan</span>
+            <span>Issues</span>
+            <span>Improve</span>
+            <span>You</span>
+          </div>
+
+          <!-- Connector to Scan -->
+          <div class="flow-connector-arrow">→</div>
+        </div>
+
+        <div class="flow-step-label">
+          <span class="flow-dot"></span>
+          <span>1. POSTURE</span>
+        </div>
+        <div class="secondary-connector-chip">
+          <span>Start: Evaluate Score</span>
+        </div>
+      </div>
+
+      <!-- 2. SCAN -->
+      <div class="flow-column">
+        <div class="phone-mockup">
+          <div class="mockup-top">
+            <span>9:41</span>
+            <div class="notch-island"></div>
+            <span>5G</span>
+          </div>
+
+          <div class="mockup-body">
+            <div class="screen-header-line">
+              <span class="screen-title-badge">2. Scan</span>
+              <span class="screen-tag-pill">5-Stage Pipeline</span>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:2px; margin-bottom:5px;">
+              <div class="ui-card" style="margin:0; padding:2.5px; text-align:center; font-size:7px; font-weight:700; background:#fff; border-color:#111;">Device</div>
+              <div class="ui-card" style="margin:0; padding:2.5px; text-align:center; font-size:7px; color:var(--text-muted);">Habits</div>
+              <div class="ui-card" style="margin:0; padding:2.5px; text-align:center; font-size:7px; color:var(--text-muted);">App Risk</div>
+            </div>
+
+            <div class="ui-card" style="border-left:2.5px solid var(--color-green);">
+              <div class="ui-card-title">
+                <span>Pipeline Complete</span>
+                <strong style="font-family:'JetBrains Mono'">100%</strong>
+              </div>
+              <span class="ui-card-desc">Probed hardware & permissions</span>
+            </div>
+
+            <div class="ui-card">
+              <div class="ui-card-title">
+                <span>Device Integrity</span>
+                <span style="font-size:6.5px; color:var(--color-green); font-weight:700;">✓ VERIFIED</span>
+              </div>
+              <span class="ui-card-desc">Lock: PIN • Patch: 2026-05</span>
+            </div>
+
+            <div class="ui-card">
+              <div class="ui-card-title">
+                <span>App Permissions</span>
+                <span style="font-size:6.5px; color:var(--color-purple); font-weight:700;">◉ PERMISSION</span>
+              </div>
+              <span class="ui-card-desc">1 app with READ_SMS access</span>
+            </div>
+
+            <div class="ui-card">
+              <div class="ui-card-title">
+                <span>Self-Assessment</span>
+                <span style="font-size:6.5px; color:var(--color-blue); font-weight:700;">◇ SELF-REPORT</span>
+              </div>
+              <span class="ui-card-desc">Feeds live scoring engine</span>
+            </div>
+
+            <button class="ui-btn-action" style="background:#fff; color:#111; border:1px solid var(--border-color);">Discover Issues →</button>
+          </div>
+
+          <div class="mockup-dock">
+            <span>Posture</span>
+            <span class="dock-active-tab">Scan</span>
+            <span>Issues</span>
+            <span>Improve</span>
+            <span>You</span>
+          </div>
+
+          <!-- Connector to Issues -->
+          <div class="flow-connector-arrow">→</div>
+        </div>
+
+        <div class="flow-step-label">
+          <span class="flow-dot"></span>
+          <span>2. SCAN</span>
+        </div>
+        <div class="secondary-connector-chip" style="color:var(--color-blue);">
+          <span>Self-Assessment feeds Score</span>
+        </div>
+      </div>
+
+      <!-- 3. ISSUES -->
+      <div class="flow-column">
+        <div class="phone-mockup">
+          <div class="mockup-top">
+            <span>9:41</span>
+            <div class="notch-island"></div>
+            <span>5G</span>
+          </div>
+
+          <div class="mockup-body">
+            <div class="screen-header-line">
+              <span class="screen-title-badge">3. Issues</span>
+              <span class="screen-tag-pill">Findings</span>
+            </div>
+
+            <div class="ui-card" style="border-left:2.5px solid var(--color-red);">
+              <div class="ui-card-title">
+                <span style="color:var(--color-red);">Insecure Lock Pattern</span>
+                <span style="color:var(--color-green); font-family:'JetBrains Mono'">+40 pts</span>
+              </div>
+              <span class="ui-card-desc">Pattern lock is easily bypassed.</span>
+              <div style="display:flex; justify-content:space-between; margin-top:3px; font-size:7px;">
+                <span style="color:var(--color-green); font-weight:700;">✓ VERIFIED</span>
+                <span style="color:var(--color-blue); font-weight:700;">Settings ↗</span>
+              </div>
+            </div>
+
+            <div class="ui-card" style="border-left:2.5px solid var(--color-amber);">
+              <div class="ui-card-title">
+                <span style="color:var(--color-amber);">SMS Background Access</span>
+                <span style="color:var(--color-green); font-family:'JetBrains Mono'">+20 pts</span>
+              </div>
+              <span class="ui-card-desc">App declared READ_SMS.</span>
+              <div style="display:flex; justify-content:space-between; margin-top:3px; font-size:7px;">
+                <span style="color:var(--color-purple); font-weight:700;">◉ PERMISSION</span>
+                <span style="color:var(--color-blue); font-weight:700;">Perms ↗</span>
+              </div>
+            </div>
+
+            <div class="ui-card" style="border-left:2.5px solid var(--color-amber);">
+              <div class="ui-card-title">
+                <span>Corporate Leak Match</span>
+                <span style="color:var(--color-green); font-family:'JetBrains Mono'">+20 pts</span>
+              </div>
+              <span class="ui-card-desc">Found in Edmodo leak index.</span>
+              <div style="display:flex; justify-content:space-between; margin-top:3px; font-size:7px;">
+                <span style="color:var(--color-green); font-weight:700;">✓ VERIFIED</span>
+                <span style="color:var(--color-blue); font-weight:700;">Change ↗</span>
+              </div>
+            </div>
+
+            <button class="ui-btn-action">Remediate Issues →</button>
+          </div>
+
+          <div class="mockup-dock">
+            <span>Posture</span>
+            <span>Scan</span>
+            <span class="dock-active-tab">Issues</span>
+            <span>Improve</span>
+            <span>You</span>
+          </div>
+
+          <!-- Connector to Improve -->
+          <div class="flow-connector-arrow">→</div>
+        </div>
+
+        <div class="flow-step-label">
+          <span class="flow-dot"></span>
+          <span>3. ISSUES</span>
+        </div>
+        <div class="secondary-connector-chip" style="color:var(--color-purple);">
+          <span>App Risk → Creates Findings</span>
+        </div>
+      </div>
+
+      <!-- 4. IMPROVE -->
+      <div class="flow-column">
+        <div class="phone-mockup">
+          <div class="mockup-top">
+            <span>9:41</span>
+            <div class="notch-island"></div>
+            <span>5G</span>
+          </div>
+
+          <div class="mockup-body">
+            <div class="screen-header-line">
+              <span class="screen-title-badge">4. Improve</span>
+              <span class="screen-tag-pill">Remediation</span>
+            </div>
+
+            <div class="ui-card" style="background:#fff; border:1px solid var(--border-color);">
+              <div style="display:flex; justify-content:space-between; font-size:8px;">
+                <span>Current: <strong style="font-family:'JetBrains Mono'">85</strong></span>
+                <span style="color:var(--color-green);">Projected: <strong style="font-family:'JetBrains Mono'">100</strong></span>
+              </div>
+              <div style="height:3px; background:#E5DFD4; border-radius:2px; margin:3px 0; overflow:hidden;">
+                <div style="height:100%; width:85%; background:var(--color-green);"></div>
+              </div>
+              <span class="ui-card-desc">Recover +15 pts upon verification</span>
+            </div>
+
+            <div style="font-size:7.5px; font-weight:800; text-transform:uppercase; color:var(--text-muted); margin:3px 0 1px 0;">Prioritized Action Plan</div>
+
+            <div class="ui-card">
+              <div class="ui-card-title">
+                <span>Enable Biometric Lock</span>
+                <span style="color:var(--color-green); font-family:'JetBrains Mono'">+40 pts</span>
+              </div>
+              <span class="ui-card-desc">&lt; 2 mins • Hardware Keyguard</span>
+              <div style="margin-top:3px;">
+                <span style="font-size:7px; background:#111; color:#fff; padding:1.5px 4px; border-radius:3px; font-weight:700;">Fix in Settings ↗</span>
+              </div>
+            </div>
+
+            <div class="ui-card">
+              <div class="ui-card-title">
+                <span>Revoke SMS Permission</span>
+                <span style="color:var(--color-green); font-family:'JetBrains Mono'">+20 pts</span>
+              </div>
+              <span class="ui-card-desc">&lt; 1 min • Package Manager</span>
+            </div>
+
+            <button class="ui-btn-action" style="background:var(--color-green);">Verify & Re-scan ↺</button>
+          </div>
+
+          <div class="mockup-dock">
+            <span>Posture</span>
+            <span>Scan</span>
+            <span>Issues</span>
+            <span class="dock-active-tab">Improve</span>
+            <span>You</span>
+          </div>
+
+          <!-- Connector to Tools -->
+          <div class="flow-connector-arrow">→</div>
+        </div>
+
+        <div class="flow-step-label">
+          <span class="flow-dot"></span>
+          <span>4. IMPROVE</span>
+        </div>
+        <div class="secondary-connector-chip" style="color:var(--color-green);">
+          <span>Fix → Verify & Rescan Loop</span>
+        </div>
+      </div>
+
+      <!-- 5. SECURITY TOOLS -->
+      <div class="flow-column">
+        <div class="phone-mockup">
+          <div class="mockup-top">
+            <span>9:41</span>
+            <div class="notch-island"></div>
+            <span>5G</span>
+          </div>
+
+          <div class="mockup-body">
+            <div class="screen-header-line">
+              <span class="screen-title-badge">5. Tools</span>
+              <span class="screen-tag-pill">Zero-Knowledge</span>
+            </div>
+
+            <div class="ui-card">
+              <div class="ui-card-title">
+                <span>Password Security Check</span>
+                <span style="font-size:6.5px; color:var(--color-green); font-weight:700;">k-Anonymity</span>
+              </div>
+              <span class="ui-card-desc">78 bits entropy • 0 leaks found</span>
+            </div>
+
+            <div class="ui-card" style="border:1px solid var(--color-green);">
+              <div class="ui-card-title">
+                <span>Password Generator</span>
+                <span style="font-size:6.5px; color:var(--color-green); font-weight:700;">100% Local</span>
+              </div>
+              <span class="ui-card-desc" style="font-family:'JetBrains Mono'; font-weight:700; color:#111;">v9$Kp!8mQ#2xL@1wZ</span>
+              <div style="display:flex; gap:3px; margin-top:3px;">
+                <span style="font-size:6.5px; background:#111; color:#fff; padding:1.5px 4px; border-radius:3px;">Copy</span>
+                <span style="font-size:6.5px; background:var(--color-green); color:#fff; padding:1.5px 4px; border-radius:3px; font-weight:700;">Save to Vault</span>
+              </div>
+            </div>
+
+            <div class="ui-card">
+              <div class="ui-card-title">
+                <span>Suspicious Link Scanner</span>
+                <span style="font-size:6.5px; color:var(--color-teal); font-weight:700;">Heuristic</span>
+              </div>
+              <span class="ui-card-desc">Typosquatting & punycode check</span>
+            </div>
+
+            <div class="ui-card">
+              <div class="ui-card-title">
+                <span>Email Breach Radar</span>
+                <span style="font-size:6.5px; color:var(--color-amber); font-weight:700;">Index</span>
+              </div>
+              <span class="ui-card-desc">Corporate breach inquiry</span>
+            </div>
+
+            <button class="ui-btn-action">Open Tool Hub →</button>
+          </div>
+
+          <div class="mockup-dock">
+            <span>Posture</span>
+            <span>Scan</span>
+            <span>Issues</span>
+            <span class="dock-active-tab">Improve</span>
+            <span>You</span>
+          </div>
+
+          <!-- Connector to Vault -->
+          <div class="flow-connector-arrow">→</div>
+        </div>
+
+        <div class="flow-step-label">
+          <span class="flow-dot"></span>
+          <span>5. TOOLS</span>
+        </div>
+        <div class="secondary-connector-chip" style="color:var(--color-teal);">
+          <span>Generator → Save to Vault</span>
+        </div>
+      </div>
+
+      <!-- 6. YOU / VAULT & HISTORY -->
+      <div class="flow-column">
+        <div class="phone-mockup">
+          <div class="mockup-top">
+            <span>9:41</span>
+            <div class="notch-island"></div>
+            <span>5G</span>
+          </div>
+
+          <div class="mockup-body">
+            <div class="screen-header-line">
+              <span class="screen-title-badge">6. You</span>
+              <span class="screen-tag-pill">Enclave Vault</span>
+            </div>
+
+            <div class="ui-card" style="background:#fff; border:1px solid var(--border-color);">
+              <div class="ui-card-title">
+                <span>Offline Hardware Vault</span>
+                <span style="font-size:6.5px; color:var(--color-green); font-weight:700;">ENCLAVE</span>
+              </div>
+              <span class="ui-card-desc">3 stored credentials • 0 duplicates</span>
+            </div>
+
+            <div class="ui-card">
+              <div class="ui-card-title">
+                <span>github.com</span>
+                <span style="font-size:6.5px; color:var(--color-purple); font-weight:700;">2FA ACTIVE</span>
+              </div>
+              <span class="ui-card-desc" style="font-family:'JetBrains Mono'">developer@campus.edu • •••••••••</span>
+            </div>
+
+            <div style="font-size:7.5px; font-weight:800; text-transform:uppercase; color:var(--text-muted); margin:3px 0 1px 0;">7-Day Score Progression</div>
+
+            <div class="ui-card" style="font-family:'JetBrains Mono'; font-size:7.5px; display:flex; justify-content:space-between;">
+              <span>52</span>
+              <span>→</span>
+              <span>68</span>
+              <span>→</span>
+              <span style="color:var(--color-green); font-weight:700;">85</span>
+            </div>
+
+            <div class="ui-card">
+              <div class="ui-card-title" style="color:var(--color-red);">Right to Erasure</div>
+              <span class="ui-card-desc">1-click purge of all stored telemetry.</span>
+            </div>
+
+            <button class="ui-btn-action" style="background:#fff; color:var(--color-red); border:1px solid var(--color-red-border);">Delete All My Data</button>
+          </div>
+
+          <div class="mockup-dock">
+            <span>Posture</span>
+            <span>Scan</span>
+            <span>Issues</span>
+            <span>Improve</span>
+            <span class="dock-active-tab">You</span>
+          </div>
+        </div>
+
+        <div class="flow-step-label">
+          <span class="flow-dot"></span>
+          <span>6. VAULT & HISTORY</span>
+        </div>
+        <div class="secondary-connector-chip" style="color:var(--color-purple);">
+          <span>Hardware Keystore Isolation</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BOTTOM UNIFIED SYSTEM & DATA PIPELINE -->
+  <footer class="system-pipeline-footer">
+    <div class="pipeline-title-row">
+      <span>On-Device Deterministic Security Data Pipeline (Zero Cloud Telemetry)</span>
+      <span style="font-size:9px; color:var(--color-green); font-weight:700;">100% On-Device Engine</span>
+    </div>
+
+    <div class="pipeline-steps-strip">
+      <div class="pipeline-box">
+        <div class="p-tag">Stage 1</div>
+        <strong>Input Signals</strong>
+        <span>Hardware • Manifest • Habits</span>
+      </div>
+
+      <div class="pipeline-box">
+        <div class="p-tag">Stage 2</div>
+        <strong>Evidence Tiers</strong>
+        <span>VERIFIED (1.0) • PERM (0.85)</span>
+      </div>
+
+      <div class="pipeline-box">
+        <div class="p-tag">Stage 3</div>
+        <strong>Rule Engine</strong>
+        <span>25+ Invariants & Penalties</span>
+      </div>
+
+      <div class="pipeline-box" style="border-color:var(--color-green); background:#FFFFFF;">
+        <div class="p-tag" style="color:var(--color-green);">Stage 4</div>
+        <strong style="color:var(--color-green);">Hygiene Index</strong>
+        <span>Weighted Score (0–100)</span>
+      </div>
+
+      <div class="pipeline-box">
+        <div class="p-tag">Stage 5</div>
+        <strong>Findings</strong>
+        <span>Critical / High / Med Risks</span>
+      </div>
+
+      <div class="pipeline-box">
+        <div class="p-tag">Stage 6</div>
+        <strong>Remediation</strong>
+        <span>Quick Wins & Settings Links</span>
+      </div>
+
+      <div class="pipeline-box">
+        <div class="p-tag">Stage 7</div>
+        <strong>Verify & Rescan</strong>
+        <span>Automatic Probing Loop</span>
+      </div>
+
+      <div class="pipeline-box" style="border-color:#111210; background:#FFFFFF;">
+        <div class="p-tag">Stage 8</div>
+        <strong>Score Milestone</strong>
+        <span>Score Hardened to 100</span>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>
