@@ -92,11 +92,27 @@ export const ScanScreen: React.FC<ScanScreenProps> = ({
     },
   };
 
+  // Signal values are `unknown`: booleans, strings, arrays of installed apps,
+  // or nested objects such as { enabled, lockType }. String() on those renders
+  // the literal text "[object Object]", so format by shape instead.
+  const formatSignalValue = (value: unknown): string => {
+    if (value === null || value === undefined) return 'unavailable';
+    if (Array.isArray(value)) return `${value.length} item${value.length === 1 ? '' : 's'}`;
+    if (typeof value === 'object') {
+      const entries = Object.entries(value as Record<string, unknown>).filter(
+        ([, v]) => v !== null && v !== undefined && typeof v !== 'object'
+      );
+      if (entries.length === 0) return `${Object.keys(value as object).length} fields`;
+      return entries.map(([k, v]) => `${k}=${String(v)}`).join(' ');
+    }
+    return String(value);
+  };
+
   const getStageTelemetry = (stage: ScanStage) => {
     const stageSignals = signals.filter((s) => s.category === stage);
     return stageSignals.map((s) => ({
       key: s.id,
-      value: String(s.value),
+      value: formatSignalValue(s.value),
       provenance: s.provenance,
     }));
   };

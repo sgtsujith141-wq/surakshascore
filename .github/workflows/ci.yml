@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Typecheck, test and build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [20, 22]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Run the test suite
+        run: npm test
+
+      - name: Production build
+        run: npm run build
+
+      - name: Check the core engine has no platform dependencies
+        # src/core must stay free of React, Capacitor and browser globals so the
+        # scoring engine can run anywhere. tests/core/isolation.test.ts enforces
+        # this; running it alone makes a violation obvious in the job list.
+        run: npx vitest run tests/core/isolation.test.ts
