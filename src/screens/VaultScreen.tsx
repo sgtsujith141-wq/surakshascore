@@ -60,10 +60,10 @@ export const VaultScreen: React.FC = () => {
       <div className="border-b border-[#E0DAD0] pb-3 flex items-center justify-between">
         <div>
           <h2 className="text-sm font-bold text-neutral-900 uppercase tracking-wider">
-            Offline Credential Vault
+            Demo Credential Vault
           </h2>
           <p className="text-xs text-neutral-500 mt-0.5">
-            Hardware keystore enclave • 100% on-device local storage
+            In-memory demonstration • not encrypted • cleared on reload
           </p>
         </div>
         <button
@@ -76,7 +76,9 @@ export const VaultScreen: React.FC = () => {
         </button>
       </div>
 
-      {/* Hardware Enclave Guarantee Plate */}
+      {/* Scope notice. This vault is a UI demonstration: entries live in React
+          state, are not encrypted and are not persisted. The copy below must
+          keep saying exactly that until real storage is implemented. */}
       <div className="bg-white p-5 border border-[#E0DAD0] rounded-[22px] flex items-start gap-3.5 shadow-card">
         <div className="p-2.5 rounded-xl bg-neutral-100 text-neutral-800 shrink-0 mt-0.5">
           <Lock size={20} />
@@ -84,14 +86,14 @@ export const VaultScreen: React.FC = () => {
         <div>
           <div className="flex items-center gap-2">
             <h4 className="text-sm font-semibold text-neutral-900">
-              Hardware-Backed Cryptographic Isolation
+              Demonstration Only — Not A Password Manager
             </h4>
-            <span className="text-[10px] font-bold px-2 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-md">
-              ENCLAVE ISOLATED
+            <span className="text-[10px] font-bold px-2 py-0.5 bg-amber-50 text-amber-800 border border-amber-200 rounded-md">
+              NOT ENCRYPTED
             </span>
           </div>
           <p className="text-xs text-neutral-500 mt-1 leading-relaxed">
-            All stored credentials, passwords, and 2FA recovery seeds reside strictly in your device's hardware-backed local keystore. No credentials ever sync to cloud servers.
+            This screen demonstrates the vault interface only. Entries are held in memory in this tab, are <strong>not encrypted</strong> and are <strong>lost when you reload</strong>. Nothing is sent anywhere — this build has no backend — but do not store a real password here.
           </p>
         </div>
       </div>
@@ -115,7 +117,7 @@ export const VaultScreen: React.FC = () => {
           <div className="p-4 flex items-center justify-between">
             <div>
               <span className="font-semibold text-neutral-900 block">Two-Factor Authentication (2FA)</span>
-              <span className="text-[11px] text-neutral-500">TOTP Authenticator & Hardware Token</span>
+              <span className="text-[11px] text-neutral-500">Self-reported per demo entry</span>
             </div>
             <span className="font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200/80 px-2.5 py-1 rounded-lg">
               Enabled (TOTP)
@@ -138,11 +140,11 @@ export const VaultScreen: React.FC = () => {
       <article className="space-y-2.5">
         <div className="flex items-center justify-between px-0.5">
           <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">
-            Stored Enclave Credentials ({vaultCredentials.length})
+            Demo Credentials ({vaultCredentials.length})
           </h3>
-          <span className="text-[11px] text-emerald-800 font-medium flex items-center gap-1">
+          <span className="text-[11px] text-amber-800 font-medium flex items-center gap-1">
             <ShieldCheck size={13} />
-            <span>Encrypted at rest</span>
+            <span>In memory only</span>
           </span>
         </div>
 

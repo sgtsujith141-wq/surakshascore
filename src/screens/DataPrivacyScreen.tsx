@@ -6,7 +6,7 @@ interface DataCollectionItem {
   category: string;
   item: string;
   purpose: string;
-  storageLocation: 'Local Hardware Enclave' | 'Local Device Storage' | 'Local Cache Only';
+  storageLocation: 'In Memory' | 'localStorage';
   isTransmittedToCloud: boolean;
 }
 
@@ -15,42 +15,42 @@ const DATA_COLLECTION_TABLE: DataCollectionItem[] = [
     category: 'Device Integrity',
     item: 'OS version, security update recency, screen lock type, developer mode state',
     purpose: 'Device integrity scoring and vulnerability detection',
-    storageLocation: 'Local Device Storage',
+    storageLocation: 'In Memory',
     isTransmittedToCloud: false,
   },
   {
     category: 'Installed Apps',
     item: 'Package names, declared permission combinations, last opened timestamp',
     purpose: 'Permission risk analysis and high-risk capability detection',
-    storageLocation: 'Local Device Storage',
+    storageLocation: 'In Memory',
     isTransmittedToCloud: false,
   },
   {
     category: 'Network State',
     item: 'Wi-Fi encryption type (WPA2/WPA3), captive portal flag, active VPN status',
     purpose: 'Network security evaluation and hotspot warnings',
-    storageLocation: 'Local Device Storage',
+    storageLocation: 'In Memory',
     isTransmittedToCloud: false,
   },
   {
     category: 'Habits Responses',
     item: 'Self-reported answers to 5 security habit questions',
     purpose: 'Behavioral hygiene profile scoring',
-    storageLocation: 'Local Device Storage',
+    storageLocation: 'In Memory',
     isTransmittedToCloud: false,
   },
   {
     category: 'Vault & Passwords',
-    item: 'Encrypted credentials, master keys, OTP tokens',
-    purpose: 'Offline password storage and credential hygiene evaluation',
-    storageLocation: 'Local Hardware Enclave',
+    item: 'Demo credential entries (service, username, password) — stored in plain text, not encrypted',
+    purpose: 'Vault interface demonstration and credential hygiene evaluation',
+    storageLocation: 'In Memory',
     isTransmittedToCloud: false,
   },
   {
     category: 'Audit History',
     item: 'Timestamped scores, active finding counts, category point breakdown',
     purpose: 'Historical progress tracking and remediation roadmap',
-    storageLocation: 'Local Cache Only',
+    storageLocation: 'localStorage',
     isTransmittedToCloud: false,
   },
 ];
@@ -94,11 +94,11 @@ export const DataPrivacyScreen: React.FC = () => {
             Data & Privacy
           </h2>
           <p className="text-xs text-neutral-500 mt-0.5">
-            Transparent data inventory and zero-knowledge privacy controls
+            Transparent data inventory and on-device privacy controls
           </p>
         </div>
         <span className="text-xs font-semibold px-2.5 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-full">
-          100% On-Device
+          No Backend
         </span>
       </div>
 
@@ -110,10 +110,10 @@ export const DataPrivacyScreen: React.FC = () => {
           </div>
           <div>
             <h3 className="text-sm font-semibold text-neutral-900">
-              Zero-Knowledge Privacy Architecture
+              No Backend, No Accounts, No Telemetry
             </h3>
             <p className="text-xs text-neutral-500 mt-1 leading-relaxed">
-              SurakshaScore runs directly on your device. We do not collect passwords, OTPs, PINs, bank details, contacts, browsing history, or message content. No personal telemetry is ever stored or shared.
+              SurakshaScore runs entirely in this app. There is no server, no account and no analytics. It does not collect passwords, OTPs, PINs, bank details, contacts, browsing history or message content. The one outbound request is the password leak check, which sends only the first five characters of a SHA-1 hash (k-anonymity) and never the password itself.
             </p>
           </div>
         </div>
@@ -125,11 +125,11 @@ export const DataPrivacyScreen: React.FC = () => {
           </div>
           <div className="p-2.5 border border-neutral-200/70 bg-neutral-50 rounded-xl">
             <Lock size={15} className="mx-auto mb-1 text-neutral-700" />
-            <span className="font-semibold text-neutral-800 block text-[11px]">Offline Vault</span>
+            <span className="font-semibold text-neutral-800 block text-[11px]">No Accounts</span>
           </div>
           <div className="p-2.5 border border-neutral-200/70 bg-neutral-50 rounded-xl">
             <HardDrive size={15} className="mx-auto mb-1 text-neutral-700" />
-            <span className="font-semibold text-neutral-800 block text-[11px]">Local Storage</span>
+            <span className="font-semibold text-neutral-800 block text-[11px]">Stays On Device</span>
           </div>
         </div>
       </div>
@@ -181,7 +181,7 @@ export const DataPrivacyScreen: React.FC = () => {
               Purge All Local Data & Scan History
             </h4>
             <p className="text-xs text-neutral-500 mt-1 leading-relaxed">
-              Permanently deletes all saved audit snapshots, habit responses, cached finding states, and offline vault tokens from this device.
+              Clears saved audit history from browser storage and resets habit responses, finding states and the demo vault for this session.
             </p>
           </div>
 

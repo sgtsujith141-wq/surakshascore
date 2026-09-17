@@ -152,7 +152,8 @@ dishonesty this project exists to avoid.
   unavailable.
 - **Link scanner** — heuristic detection of phishing indicators: brand
   typosquatting, punycode spoofing and raw-IP URLs.
-- **Local credential vault** and breach monitor.
+- **Demo credential vault** (in-memory, unencrypted, clearly labelled as such)
+  and breach monitor.
 - **Android build** via Capacitor.
 
 <details>
@@ -289,15 +290,20 @@ than one that verifies nothing.
   verified device data. Until then Android reports them as unavailable rather
   than guessing — which is correct, but means the Tier 1 and Tier 2 paths are
   currently exercised only by tests.
-- **The local vault is a UI demonstration, and its own label overstates it.**
-  It is seeded with clearly-labelled fictional entries and held in React state,
-  so nothing survives a reload. The screen displays the badge "Encrypted at
-  rest", and **that is not implemented** — the only `crypto.subtle` call in the
-  codebase is the SHA-1 digest used for the k-anonymity leak check. The badge
-  is a leftover from the visual design and should be removed or made true
-  before the vault is presented as a feature. (Real client-side encryption,
-  PBKDF2-SHA256 with AES-GCM, exists in the
+- **The vault is a UI demonstration and now says so.** Entries are seeded
+  fictional credentials held in React state: **not encrypted, not persisted,
+  cleared on reload.** The screen previously displayed "Encrypted at rest",
+  "Hardware-Backed Cryptographic Isolation" and an "ENCLAVE ISOLATED" badge —
+  none of which was implemented — and those have been replaced with an explicit
+  "NOT ENCRYPTED" notice. The only `crypto.subtle` call in the codebase remains
+  the SHA-1 digest used for the k-anonymity leak check. (Real client-side
+  encryption, PBKDF2-SHA256 with AES-GCM, exists in the
   [predecessor repository](https://github.com/sgtsujith141-wq/surakshascore-mvp).)
+- **Badges reflect provenance, not aspiration.** The network and permission
+  inspectors read from the mock signal provider in the web build, so they are
+  labelled **"Demo Signals"** rather than "OS Verified". "k-Anonymity",
+  "Heuristic Engine", "On-Device Index" and "100% Local" are accurate
+  descriptions of what those tools actually do.
 - **The link scanner is heuristic.** It detects typosquatting, punycode and raw
   IPs; it does not consult any reputation feed and will miss novel phishing.
 - **No persistence.** No backend, no accounts, no sync. State is in-memory and
@@ -312,8 +318,9 @@ than one that verifies nothing.
   device — the single change that would most increase the score's meaning.
 - Persist scan history locally so the Timeline screen shows genuine trend data.
 - Move the link scanner from pure heuristics to an on-device blocklist.
-- Harden the vault (or remove it) — a demonstration vault in a security app is a
-  liability if a user mistakes it for a real one.
+- Harden the vault or remove it. It is now unambiguously labelled as a
+  demonstration, but a real security app should either encrypt and persist
+  credentials properly or not offer the screen at all.
 - iOS target via Capacitor, with the same unavailable-not-guessed discipline.
 
 ## Repository layout

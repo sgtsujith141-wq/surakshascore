@@ -145,7 +145,7 @@ export const ToolsScreen: React.FC = () => {
           Security Tools Workspace
         </h2>
         <p className="text-xs text-neutral-500 mt-0.5">
-          Run focused on-device diagnostic tools and zero-knowledge privacy checks.
+          Run focused on-device diagnostic tools and privacy-preserving checks.
         </p>
       </div>
 
@@ -159,7 +159,7 @@ export const ToolsScreen: React.FC = () => {
                 Credential Security
               </h3>
               <span className="text-[11px] font-medium text-purple-700 bg-purple-50 px-2 py-0.5 rounded-md border border-purple-200">
-                Zero-Knowledge
+                Privacy-Preserving
               </span>
             </div>
 
@@ -228,7 +228,7 @@ export const ToolsScreen: React.FC = () => {
                         <span className="text-[10px] font-semibold text-emerald-800 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">100% Local</span>
                       </div>
                       <p className="text-xs text-neutral-500 mt-0.5 leading-relaxed">
-                        Generate cryptographic credentials and save directly to your Hardware Vault.
+                        Generate a strong random password locally and save it to the demo vault.
                       </p>
                     </div>
                   </div>
@@ -287,7 +287,7 @@ export const ToolsScreen: React.FC = () => {
                     <div>
                       <div className="flex items-center gap-2">
                         <h4 className="text-sm font-semibold text-neutral-900">Network Security Inspector</h4>
-                        <span className="text-[10px] font-semibold text-emerald-800 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">OS Verified</span>
+                        <span className="text-[10px] font-semibold text-amber-800 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">Demo Signals</span>
                       </div>
                       <p className="text-xs text-neutral-500 mt-0.5 leading-relaxed">
                         Inspect active Wi-Fi encryption (WPA2/WPA3), captive portals, and VPN tunnel security.
@@ -307,7 +307,7 @@ export const ToolsScreen: React.FC = () => {
                 Device & System
               </h3>
               <span className="text-[11px] font-medium text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200">
-                Hardware Enclave
+                On-Device
               </span>
             </div>
 
@@ -324,7 +324,7 @@ export const ToolsScreen: React.FC = () => {
                     <div>
                       <div className="flex items-center gap-2">
                         <h4 className="text-sm font-semibold text-neutral-900">Permission Inspector</h4>
-                        <span className="text-[10px] font-semibold text-purple-800 bg-purple-50 px-1.5 py-0.5 rounded border border-purple-200">OS Verified</span>
+                        <span className="text-[10px] font-semibold text-amber-800 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">Demo Signals</span>
                       </div>
                       <p className="text-xs text-neutral-500 mt-0.5 leading-relaxed">
                         Review high-risk declared capabilities (SMS, Camera, Location, Contacts) across installed apps.
@@ -394,7 +394,7 @@ export const ToolsScreen: React.FC = () => {
                     Password Security Check
                   </h3>
                   <span className="text-[10px] font-bold px-2 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-md">
-                    ZERO-KNOWLEDGE
+                    K-ANONYMITY
                   </span>
                 </div>
                 <p className="text-xs text-neutral-500 mt-1 leading-relaxed">
@@ -1110,12 +1110,12 @@ export const ToolsScreen: React.FC = () => {
                   <h3 className="text-sm font-semibold text-neutral-900">
                     Network Security Inspector
                   </h3>
-                  <span className="text-[10px] font-bold px-2 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-md">
-                    OS VERIFIED
+                  <span className="text-[10px] font-bold px-2 py-0.5 bg-amber-50 text-amber-800 border border-amber-200 rounded-md">
+                    DEMO SIGNALS
                   </span>
                 </div>
                 <p className="text-xs text-neutral-500 mt-1 leading-relaxed">
-                  Live evaluation of network transport encryption standards, active VPN routing, and captive hotspot exposure.
+                  Evaluates network transport encryption, active VPN routing and captive hotspot exposure. Values shown come from the demo signal provider, not from your network.
                 </p>
               </div>
             </div>
@@ -1176,12 +1176,12 @@ export const ToolsScreen: React.FC = () => {
                   <h3 className="text-sm font-semibold text-neutral-900">
                     Application Permission Inspector
                   </h3>
-                  <span className="text-[10px] font-bold px-2 py-0.5 bg-purple-50 text-purple-800 border border-purple-200 rounded-md">
-                    OS VERIFIED
+                  <span className="text-[10px] font-bold px-2 py-0.5 bg-amber-50 text-amber-800 border border-amber-200 rounded-md">
+                    DEMO SIGNALS
                   </span>
                 </div>
                 <p className="text-xs text-neutral-500 mt-1 leading-relaxed">
-                  Detailed inspection of high-risk permissions requested by background installed applications.
+                  Inspects high-risk permissions declared by installed applications. Values shown come from the demo signal provider, not from your device.
                 </p>
               </div>
             </div>

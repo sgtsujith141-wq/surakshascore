@@ -57,7 +57,7 @@ export const ScanScreen: React.FC<ScanScreenProps> = ({
   const categoryConfig: Record<ScanStage, { name: string; desc: string; icon: React.ReactNode; color: string; badgeBg: string }> = {
     device: {
       name: 'Device Security',
-      desc: 'Screen lock, hardware keystore, and OS patch recency',
+      desc: 'Screen lock, disk encryption state, and OS patch recency',
       icon: <Smartphone size={16} />,
       color: '#2563eb', // Blue
       badgeBg: 'bg-blue-50 text-blue-700 border-blue-200/80',
@@ -78,7 +78,7 @@ export const ScanScreen: React.FC<ScanScreenProps> = ({
     },
     account: {
       name: 'Account Security',
-      desc: 'Credential hygiene baseline and zero-knowledge breach inquiries',
+      desc: 'Credential hygiene baseline and k-anonymity breach inquiries',
       icon: <Mail size={16} />,
       color: '#d97706', // Amber
       badgeBg: 'bg-amber-50 text-amber-800 border-amber-200/80',
@@ -524,8 +524,8 @@ export const ScanScreen: React.FC<ScanScreenProps> = ({
                 <h2 className="text-sm font-bold text-neutral-900 uppercase tracking-wider">
                   App & Permission Risk Scanner
                 </h2>
-                <span className="text-[10px] font-bold px-2 py-0.5 bg-purple-50 text-purple-800 border border-purple-200 rounded-md">
-                  OS VERIFIED
+                <span className="text-[10px] font-bold px-2 py-0.5 bg-amber-50 text-amber-800 border border-amber-200 rounded-md">
+                  DEMO SIGNALS
                 </span>
               </div>
               <p className="text-xs text-neutral-500 mt-0.5">

@@ -436,7 +436,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         </div>
         <div className="flex items-center gap-1 text-emerald-800 font-medium text-[11px] bg-emerald-50 border border-emerald-200/70 px-2 py-0.5 rounded-full">
           <ShieldCheck size={12} />
-          <span>100% Local Enclave</span>
+          <span>Runs On Device</span>
         </div>
       </div>
     </div>
