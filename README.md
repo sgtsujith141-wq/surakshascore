@@ -289,9 +289,15 @@ than one that verifies nothing.
   verified device data. Until then Android reports them as unavailable rather
   than guessing — which is correct, but means the Tier 1 and Tier 2 paths are
   currently exercised only by tests.
-- **The local vault is a UI demonstration**, seeded with clearly-labelled
-  fictional entries. It is not a hardened password manager and has not been
-  reviewed as one.
+- **The local vault is a UI demonstration, and its own label overstates it.**
+  It is seeded with clearly-labelled fictional entries and held in React state,
+  so nothing survives a reload. The screen displays the badge "Encrypted at
+  rest", and **that is not implemented** — the only `crypto.subtle` call in the
+  codebase is the SHA-1 digest used for the k-anonymity leak check. The badge
+  is a leftover from the visual design and should be removed or made true
+  before the vault is presented as a feature. (Real client-side encryption,
+  PBKDF2-SHA256 with AES-GCM, exists in the
+  [predecessor repository](https://github.com/sgtsujith141-wq/surakshascore-mvp).)
 - **The link scanner is heuristic.** It detects typosquatting, punycode and raw
   IPs; it does not consult any reputation feed and will miss novel phishing.
 - **No persistence.** No backend, no accounts, no sync. State is in-memory and
